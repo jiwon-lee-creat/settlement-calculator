@@ -1,38 +1,50 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LiveAnywhere 정산 계산기</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>LiveAnywhere 정산 계산기</h1>
-    <form id="calc-form">
-      <label>총 호스트 임대료 (원):
-        <input type="number" id="host-rent" required />
-      </label>
-      <label>총 공과금 (원):
-        <input type="number" id="utilities" required />
-      </label>
-      <label>청소비 (원):
-        <input type="number" id="cleaning" required />
-      </label>
-      <label>보증금 (원):
-        <input type="number" id="deposit" required />
-      </label>
-      <label>기존 숙박일수:
-        <input type="number" id="original-nights" required />
-      </label>
-      <label>변경 숙박일수:
-        <input type="number" id="changed-nights" required />
-      </label>
-      <button type="submit">계산하기</button>
-    </form>
+    <h1>정산 계산기</h1>
 
-    <div id="result" class="result-box"></div>
+    <section>
+      <h2>1. 일정 입력</h2>
+      <div class="grid">
+        <label>기존 시작일 <input type="date" id="oldStart" /></label>
+        <label>기존 종료일 <input type="date" id="oldEnd" /></label>
+        <label>변경 시작일 <input type="date" id="newStart" /></label>
+        <label>변경 종료일 <input type="date" id="newEnd" /></label>
+      </div>
+      <p id="dateSummary" class="highlight"></p>
+    </section>
+
+    <section>
+      <h2>2. 기존 계약 정보</h2>
+      <div class="grid">
+        <label>총 호스트 임대료 <input type="number" id="totalHostRent" /></label>
+        <label>총 공과금 <input type="number" id="totalUtility" /></label>
+        <label>청소비 <input type="number" id="cleaning" /></label>
+        <label>보증금 <input type="number" id="deposit" /></label>
+      </div>
+    </section>
+
+    <section>
+      <h2>3. 연장/단축 구간 입력</h2>
+      <div class="grid">
+        <label>1박 호스트 임대료 <input type="number" id="customHostRent" /></label>
+        <label>1박 공과금 <input type="number" id="customUtility" /></label>
+      </div>
+    </section>
+
+    <button onclick="calculate()">계산하기</button>
+
+    <section>
+      <h2>4. 계산 결과</h2>
+      <div id="resultArea"></div>
+    </section>
   </div>
 
   <script src="script.js"></script>

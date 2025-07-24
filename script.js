@@ -1,26 +1,46 @@
+function dateDiffInNights(start, end) {
+  const s = new Date(start);
+  const e = new Date(end);
+  const diffTime = e - s;
+  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+}
 
-document.getElementById("calc-form").addEventListener("submit", function (e) {
-  e.preventDefault();
+function formatCurrency(value) {
+  return value.toLocaleString('ko-KR') + '원';
+}
 
-  const rent = parseInt(document.getElementById("host-rent").value);
-  const utilities = parseInt(document.getElementById("utilities").value);
-  const cleaning = parseInt(document.getElementById("cleaning").value);
-  const deposit = parseInt(document.getElementById("deposit").value);
-  const original = parseInt(document.getElementById("original-nights").value);
-  const changed = parseInt(document.getElementById("changed-nights").value);
-  const reduced = original - changed;
+function calculate() {
+  const oldStart = document.getElementById('oldStart').value;
+  const oldEnd = document.getElementById('oldEnd').value;
+  const newStart = document.getElementById('newStart').value;
+  const newEnd = document.getElementById('newEnd').value;
+  const totalHostRent = parseInt(document.getElementById('totalHostRent').value || '0');
+  const totalUtility = parseInt(document.getElementById('totalUtility').value || '0');
+  const cleaning = parseInt(document.getElementById('cleaning').value || '0');
+  const deposit = parseInt(document.getElementById('deposit').value || '0');
+  const customHostRent = parseInt(document.getElementById('customHostRent').value || '0');
+  const customUtility = parseInt(document.getElementById('customUtility').value || '0');
 
-  const rentPerNight = rent / original;
-  const utilitiesPerNight = utilities / original;
+  const oldNights = dateDiffInNights(oldStart, oldEnd);
+  const newNights = dateDiffInNights(newStart, newEnd);
+  const nightDiff = newNights - oldNights;
 
-  const guestRefund = Math.round(((rentPerNight * 1.11) + (utilitiesPerNight * 1.05)) * reduced);
-  const hostDeduct = Math.round(((rentPerNight * 0.95) + utilitiesPerNight) * reduced);
+  let summaryText = `${Math.abs(nightDiff)}박 ` + (nightDiff > 0 ? '연장됨' : '단축됨');
+  document.getElementById('dateSummary').innerText = summaryText;
 
-  const resultBox = document.getElementById("result");
-  resultBox.innerHTML = `
-    ✅ <b>기존 ${original}박 → 변경 ${changed}박</b><br/>
-    ✅ ${reduced}박 단축됨<br/><br/>
-    💰 게스트 환불 예상 금액: <b>${guestRefund.toLocaleString()}원</b><br/>
-    💸 호스트 정산 차감 예상 금액: <b>${hostDeduct.toLocaleString()}원</b>
+  const guestPerNight = (customHostRent * 1.11) + (customUtility * 1.05);
+  const hostPerNight = (customHostRent * 0.95) + customUtility;
+  const guestTotal = Math.abs(nightDiff) * guestPerNight;
+  const hostTotal = Math.abs(nightDiff) * hostPerNight;
+
+  let guestLabel = nightDiff > 0 ? '게스트 추가 결제 금액' : '게스트 환불 금액';
+  let hostLabel = nightDiff > 0 ? '호스트 추가 정산 금액' : '호스트 차감 정산 금액';
+
+  document.getElementById('resultArea').innerHTML = `
+    <p><strong>📌 ${summaryText}</strong></p>
+    <ul>
+      <li>${guestLabel}: <strong>${formatCurrency(guestTotal)}</strong> (수식: (임대료 ${customHostRent} * 1.11) + (공과금 ${customUtility} * 1.05) * ${Math.abs(nightDiff)})</li>
+      <li>${hostLabel}: <strong>${formatCurrency(hostTotal)}</strong> (수식: (임대료 ${customHostRent} * 0.95) + (공과금 ${customUtility}) * ${Math.abs(nightDiff)})</li>
+    </ul>
   `;
-});
+}
